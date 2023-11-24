@@ -1,11 +1,8 @@
-import React, { Component } from 'react'
+import React from 'react'
  //import './newsitemstyle.css';
-export default class Newsitem extends Component {
+const Newsitem =(props)=> {
 
-
-
-  render() {
-    let{title,description,imgurl,alt,newsurl,author,date,source}=this.props; //declaring the prop and we are getting the data into 
+  let{title,description,imgurl,alt,newsurl,author,date,source}=props; //declaring the prop and we are getting the data into 
     return (
       <div className='my-3' style={{width:"286px",margin:"auto"}}>{/*this style is for the adjustment of the cards outer layer divison */}
         <div className="card" style={{width:"18rem"  }}>
@@ -22,4 +19,5 @@ export default class Newsitem extends Component {
       </div>
     )
   }
-}
+
+  export default Newsitem

@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React, { useEffect, useState } from 'react'
 import Newsitem from './Newsitem'
 import Spinner from './Spinner.js'
 import PropTypes from 'prop-types'
@@ -6,45 +6,30 @@ import InfiniteScroll from "react-infinite-scroll-component";
 
 
 
-export default class News extends Component {
+const News =(props)=> {
 
-    static defaultProps={
-        country:'in',
-        pageSize:6,
-        category: 'general'
-    }
-
-    static propTypes={
-        country: PropTypes.string,
-        pageSize: PropTypes.number,
-        category: PropTypes.string
-
-    }
+    const [articles,setArticles]= useState ([])
+    const [loading,setLoading]= useState(true)
+    const [page,setPage]= useState(1)
+    const [totalResults,setTotalResults]= useState(0)
 
 
-     capitalFirst=(string)=>
+     
+    const  capitalFirst =(SString)=>
     {
-           return string.charAt(0).toUpperCase()+string.slice(1);
+           return SString.charAt(0).toUpperCase()+SString.slice(1);          //We are getting the value into this function from props and we are passing an argument named SString and returning it
     }
+
+    //document.title=`${capitalFirst(props.category)} - NewsMonkey`;
 
     
-  constructor(props)
-  {
-   super(props);
-   this.state={
-     articles:[], //this.articles, //we are now not fetching from the array articles 
-     loading:false,
-     page:1,
-     totalResults:0
-   }
+  
 
-   document.title=`${this.capitalFirst(this.props.category)} - NewsMonkey`;
-
-  }
+  
 
    /*async componentDidMount()
   {
-    let urls="https://newsapi.org/v2/everything?q=apple&from=2023-08-14&to=2023-08-14&sortBy=popularitycategory=${this.props.category}&apiKey=b6dd62f2eb3041729cf2b7488b5c315e";
+    let urls="https://newsapi.org/v2/everything?q=apple&from=2023-08-14&to=2023-08-14&sortBy=popularitycategory=${props.category}&apiKey=b6dd62f2eb3041729cf2b7488b5c315e";
     fetch(urls)
 
     .then(data =>data.json())
@@ -56,71 +41,79 @@ export default class News extends Component {
 
 // Another way to use fetchapi 
 
-async updateNews() {
+ const updateNews = async () => {
 
-  this.props.setProgress(10);
-  let urls=`https://newsapi.org/v2/top-headlines?country=${this.props.country}&category=${this.props.category}&apiKey=b6dd62f2eb3041729cf2b7488b5c315e&page=1&pageSize=${this.props.pageSize}`;
-  this.setState({loading:true})
+  props.setProgress(10);
+  let urls=`https://newsapi.org/v2/top-headlines?country=${props.country}&category=${props.category}&apiKey=b6dd62f2eb3041729cf2b7488b5c315e&page=1&pageSize=${props.pageSize}`;
+  setLoading(true)
   let data=await fetch(urls);
-  this.props.setProgress(30);
+  props.setProgress(30);
   let parsedData=await data.json();
-  this.props.setProgress(70);
-  this.setState({articles:parsedData.articles, totalresults:parsedData.totalResults,loading:false})
+  props.setProgress(70);
+
+  setArticles(parsedData.articles)   //here we are storing the json format result i.e objects into the article state variable
+  setTotalResults(parsedData.totalResults)
+  setLoading(false)
+
+  
   console.log(data)
-  this.props.setProgress(100);
+  props.setProgress(100);
 
 }
 
 
-  async componentDidMount()
-  {
+
+useEffect(()=>{             //Replace componentDidmount and using useeffect
+
+  updateNews();
+
+}, [])
+
+
+
+    // const handlePrevClick = async ()=>{
     
-    this.updateNews();
+    // setPage(page-1)
+    // updateNews();
 
-  }
+    // }
 
-
-    handlePrevClick = async ()=>{
-    
-    this.setState({page:this.state.page-1,})
-    this.updateNews();
-
-    }
-
-    handleNextClick = async ()=>{
-      this.setState({page:this.state.page+1,})
-      this.updateNews();
+    // const handleNextClick = async ()=>{
+    //   setPage(page+1)
+    //   updateNews();
   
-    }
+    // }
 
-    fetchMoreData = async () => {
+    const fetchMoreData = async () => {
       
-      this.setState({page:this.state.page+1,})
-      let urls=`https://newsapi.org/v2/top-headlines?country=${this.props.country}&category=${this.props.category}&apiKey=b6dd62f2eb3041729cf2b7488b5c315e&page=${this.state.page+1}&pageSize=${this.props.pageSize}`;
-      this.setState({loading:true})
+      setPage(page+1)
+      let urls=`https://newsapi.org/v2/top-headlines?country=${props.country}&category=${props.category}&apiKey=b6dd62f2eb3041729cf2b7488b5c315e&page=${page+1}&pageSize=${props.pageSize}`;
+      setLoading(true)
       let data=await fetch(urls);
       let parsedData=await data.json();
-      this.setState({articles:this.state.articles.concat(parsedData.articles), totalresults:parsedData.totalResults,loading:false})
+      setArticles(articles.concat(parsedData.articles))
+      setTotalResults(parsedData.totalResults)
+      setLoading(false)
       
       
     }
 
-  render() {
+ 
     return (
         <div className='Container1' style={{}}>
       <div className="Containermain" style={{width:"1700px",margin:"auto"}} >
-        <h2 style={{paddingTop:"50px",paddingBottom:"50px", marginLeft:"460px",fontSize:"40px"}}>NewsMonkey - Top Headlines on {this.capitalFirst(this.props.category)}</h2>
-        {this.state.loading&&<Spinner/>}
+        <h2 style={{paddingTop:"50px",paddingBottom:"50px", marginLeft:"460px",fontSize:"40px"}}>NewsMonkey - Top Headlines on {capitalFirst(props.category)}</h2>
+        {loading&&<Spinner/>}
 
         <InfiniteScroll
-          dataLength={this.state.articles.length}
-          next={this.fetchMoreData}
-          hasMore={this.state.articles.length !==this.state.totalResults}
+          dataLength={articles.length}
+          next={fetchMoreData}
+          hasMore={articles.length !==totalResults}
           loader={<Spinner/>}
         >
 
            <div className='row' style={{justifyContent:"between"}}>
-               {this.state.articles.map((element)=>{
+               {articles.map((element)=>{    //here we are maping the article array element is an argument we are passing in article.map
                  return <div className='col-md-4' key={element.url} >
                            <Newsitem  title={element.title?element.title.slice(0,45):""} description={element.description?element.description.slice(0,100):""} imgurl={element.urlToImage} newsurl={element.url} author={element.author} date={element.publishedAt} source={element.source.name} alt="1"/>
                         </div>
@@ -132,5 +125,56 @@ async updateNews() {
       </div>
       </div>
     )
-  }
+  
 }
+
+News.defaultProps={
+  country:'in',
+  pageSize:6,
+  category: 'general'
+}
+
+News.propTypes={
+  country: PropTypes.string,
+  pageSize: PropTypes.number,
+  category: PropTypes.string
+
+}
+
+export default News
+
+
+//example of map 
+
+// map() creates a new array from calling a function for every array element.
+
+// map() does not execute the function for empty elements.
+
+// map() does not change the original array.
+
+// const persons = [
+//   {firstname : "Malcom", lastname: "Reynolds"},
+//   {firstname : "Kaylee", lastname: "Frye"},
+//   {firstname : "Jayne", lastname: "Cobb"}
+// ];
+
+// persons.map(getFullName);
+
+// function getFullName(item) {
+//   return [item.firstname,item.lastname].join(" ");
+// }
+
+
+
+// ex-2
+
+// const numbers1 = [45, 4, 9, 16, 25];
+// const numbers2 = numbers1.map(myFunction);
+
+// function myFunction(value, index, array) {
+//   return value * 2;
+// }
+
+// Create a new array by performing a function on each array element:
+
+// 90,8,18,32,50
