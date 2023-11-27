@@ -62,11 +62,10 @@ const News =(props)=> {
 }
 
 
-
-useEffect(()=>{             //Replace componentDidmount and using useeffect
-
-  updateNews();
-
+//Replace componentDidmount and using useeffect
+useEffect(()=>{             
+updateNews();
+// eslint-disable-next-line 
 }, [])
 
 
@@ -86,8 +85,9 @@ useEffect(()=>{             //Replace componentDidmount and using useeffect
 
     const fetchMoreData = async () => {
       
+      
+      let urls=`https://newsapi.org/v2/top-headlines?country=${props.country}&category=${props.category}&apiKey=b6dd62f2eb3041729cf2b7488b5c315e&page=${page+1}&pageSize=${props.pageSize}`; //bug fix
       setPage(page+1)
-      let urls=`https://newsapi.org/v2/top-headlines?country=${props.country}&category=${props.category}&apiKey=b6dd62f2eb3041729cf2b7488b5c315e&page=${page+1}&pageSize=${props.pageSize}`;
       setLoading(true)
       let data=await fetch(urls);
       let parsedData=await data.json();
@@ -102,7 +102,7 @@ useEffect(()=>{             //Replace componentDidmount and using useeffect
     return (
         <div className='Container1' style={{}}>
       <div className="Containermain" style={{width:"1700px",margin:"auto"}} >
-        <h2 style={{paddingTop:"50px",paddingBottom:"50px", marginLeft:"460px",fontSize:"40px"}}>NewsMonkey - Top Headlines on {capitalFirst(props.category)}</h2>
+        <h2 style={{paddingTop:"100px",paddingBottom:"50px", marginLeft:"460px",fontSize:"40px"}}>NewsMonkey - Top Headlines on {capitalFirst(props.category)}</h2>
         {loading&&<Spinner/>}
 
         <InfiniteScroll

@@ -8,7 +8,7 @@ const Newsitem =(props)=> {
         <div className="card" style={{width:"18rem"  }}>
       <img src={!imgurl?"https://img.myloview.com/posters/latest-news-symbol-mobile-phone-with-offer-message-media-newspaper-sign-daily-information-customer-service-banner-latest-news-badge-shape-phone-app-speech-bubble-mobile-help-experience-vector-700-234857859.jpg":imgurl} alt={alt} style={{height:"210px", width:"285.5px"}}/>
             <div className="card-body">
-                <h5 className="card-title">{title}<span class="position-absolute top-0  translate-middle badge rounded-pill bg-danger" style={{left:"90%",fontSize:"12px"}}>{source}<span class="visually-hidden">unread messages</span></span></h5>
+                <h5 className="card-title">{title}<span className="position-absolute top-0  translate-middle badge rounded-pill bg-danger" style={{left:"90%",fontSize:"12px"}}>{source}<span className="visually-hidden">unread messages</span></span></h5>
                 <p className="card-text">{description}..</p>
                 <p className="card-text"><small className="text-muted">By {!author?"Unknown": author} on {date}</small></p>
                <div className='btn'>
